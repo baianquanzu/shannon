@@ -1,6 +1,8 @@
 >[!NOTE]
 > **[📢 Sunsetting Router Mode (claude-code-router)`. →](https://github.com/KeygraphHQ/shannon/discussions/301)**
 
+> 中文增强版使用入口：请先看 [中文使用说明.md](./中文使用说明.md)。本版本默认生成中文安全报告，并新增 `shannon monitor <workspace>` 中文监控端。
+
 <div align="center">
 
 <img src="./assets/github-banner.png" alt="Shannon — AI Pentester for Web Applications and APIs" width="100%">

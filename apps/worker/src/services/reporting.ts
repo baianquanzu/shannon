@@ -87,8 +87,9 @@ export async function assembleFinalReport(
 
 /**
  * Inject model information into the final security report.
- * Reads session.json to get the model(s) used, then injects a "Model:" line
- * into the Executive Summary section of the report.
+ * Reads session.json to get the model(s) used, then injects a model line
+ * into the Executive Summary section of the report. Chinese reports use
+ * the "模型" label; legacy English reports keep "Model".
  */
 export async function injectModelIntoReport(
   repoPath: string,
@@ -138,22 +139,22 @@ export async function injectModelIntoReport(
 
   let reportContent = await fs.readFile(reportPath, 'utf8');
 
-  // 4. Find and inject model line after "Assessment Date" in Executive Summary
-  // Pattern: "- Assessment Date: <date>" followed by a newline
-  const assessmentDatePattern = /^(- Assessment Date: .+)$/m;
+  // 4. Find and inject model line after the assessment date in Executive Summary.
+  const isChineseReport = /^## 执行摘要$/m.test(reportContent) || /^# 安全评估报告$/m.test(reportContent);
+  const modelLine = isChineseReport ? `- 模型: ${modelStr}` : `- Model: ${modelStr}`;
+  const assessmentDatePattern = isChineseReport ? /^(- 评估日期: .+)$/m : /^(- Assessment Date: .+)$/m;
   const match = reportContent.match(assessmentDatePattern);
 
   if (match) {
-    // Inject model line after Assessment Date
-    const modelLine = `- Model: ${modelStr}`;
     reportContent = reportContent.replace(assessmentDatePattern, `$1\n${modelLine}`);
     logger.info('Model info injected into Executive Summary');
   } else {
     // If no Assessment Date line found, try to add after Executive Summary header
-    const execSummaryPattern = /^## Executive Summary$/m;
+    const execSummaryPattern = isChineseReport ? /^## 执行摘要$/m : /^## Executive Summary$/m;
     if (reportContent.match(execSummaryPattern)) {
       // Add model as first item in Executive Summary
-      reportContent = reportContent.replace(execSummaryPattern, `## Executive Summary\n- Model: ${modelStr}`);
+      const execSummaryHeading = isChineseReport ? '## 执行摘要' : '## Executive Summary';
+      reportContent = reportContent.replace(execSummaryPattern, `${execSummaryHeading}\n${modelLine}`);
       logger.info('Model info added to Executive Summary header');
     } else {
       logger.warn('Could not find Executive Summary section');

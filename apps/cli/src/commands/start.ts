@@ -8,10 +8,11 @@
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
-import { ensureImage, ensureInfra, randomSuffix, spawnWorker } from '../docker.js';
+import { ensureDockerReady, ensureImage, ensureInfra, getDockerCommand, randomSuffix, spawnWorker } from '../docker.js';
 import { buildEnvFlags, loadEnv, validateCredentials } from '../env.js';
 import { getCredentialsPath, getWorkspacesDir, initHome } from '../home.js';
 import { isLocal } from '../mode.js';
+import { configureOpenAICompatibleProvider } from '../openai-compatible.js';
 import { resolveConfig, resolveRepo } from '../paths.js';
 import { displaySplash } from '../splash.js';
 
@@ -30,6 +31,7 @@ export async function start(args: StartArgs): Promise<void> {
   // 1. Initialize state directories and load env
   initHome();
   loadEnv();
+  await configureOpenAICompatibleProvider();
 
   // 2. Validate credentials
   const creds = validateCredentials();
@@ -48,6 +50,7 @@ export async function start(args: StartArgs): Promise<void> {
   fs.chmodSync(workspacesDir, 0o777);
 
   // 5. Ensure image (auto-build in dev, pull in npx) and start infra
+  ensureDockerReady();
   ensureImage(args.version);
   await ensureInfra();
 
@@ -187,7 +190,7 @@ export async function start(args: StartArgs): Promise<void> {
     clearInterval(pollInterval);
     console.log(`\nStopping worker ${containerName}...`);
     try {
-      execFileSync('docker', ['stop', containerName], { stdio: 'pipe' });
+      execFileSync(getDockerCommand(), ['stop', containerName], { stdio: 'pipe' });
     } catch {
       // Container may have already exited
     }
@@ -223,6 +226,7 @@ function printInfo(
   workspacesDir: string,
 ): void {
   const logsCmd = isLocal() ? `./shannon logs ${workspace}` : `npx @keygraph/shannon logs ${workspace}`;
+  const monitorCmd = isLocal() ? `./shannon monitor ${workspace}` : `npx @keygraph/shannon monitor ${workspace}`;
   const reportsPath = path.join(workspacesDir, workspace);
 
   console.log(`  Target:     ${args.url}`);
@@ -236,6 +240,8 @@ function printInfo(
   }
   console.log('');
   console.log('  Monitor:');
+  console.log(`    中文监控端: ${monitorCmd}`);
+  console.log('    打开后访问: http://127.0.0.1:8787');
   if (workflowId) {
     console.log(`    Web UI:  http://localhost:8233/namespaces/default/workflows/${workflowId}`);
   } else {

@@ -14,6 +14,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { build } from './commands/build.js';
 import { logs } from './commands/logs.js';
+import { monitor } from './commands/monitor.js';
 import { setup } from './commands/setup.js';
 import { start } from './commands/start.js';
 import { status } from './commands/status.js';
@@ -71,6 +72,7 @@ Usage:${
   ${prefix} stop [--clean]                               Stop all containers
   ${prefix} workspaces                                   List all workspaces
   ${prefix} logs <workspace>                             Tail workflow log
+  ${prefix} monitor <workspace> [--port 8787]             Open Chinese web monitor
   ${prefix} status                                       Show running workers${
     mode === 'local'
       ? `
@@ -94,6 +96,7 @@ Examples:
   ${prefix} start -u https://example.com -r ${mode === 'local' ? 'my-repo' : './my-repo'}
   ${prefix} start -u https://example.com -r /path/to/repo -c config.yaml -w q1-audit
   ${prefix} logs q1-audit
+  ${prefix} monitor q1-audit
   ${prefix} stop --clean
 ${
   mode === 'local'
@@ -219,6 +222,24 @@ switch (command) {
       process.exit(1);
     }
     logs(workspaceId);
+    break;
+  }
+  case 'monitor': {
+    const workspaceId = args[1];
+    if (!workspaceId) {
+      console.error('ERROR: Workspace ID is required');
+      console.error(`Usage: ${getMode() === 'local' ? './shannon' : 'npx @keygraph/shannon'} monitor <workspace> [--port 8787]`);
+      process.exit(1);
+    }
+    const portIndex = args.findIndex((arg) => arg === '--port' || arg === '-p');
+    const hostIndex = args.findIndex((arg) => arg === '--host');
+    const port = portIndex >= 0 && args[portIndex + 1] ? Number(args[portIndex + 1]) : 8787;
+    const host = hostIndex >= 0 && args[hostIndex + 1] ? args[hostIndex + 1] : '127.0.0.1';
+    if (!Number.isInteger(port) || port < 1 || port > 65535) {
+      console.error('ERROR: --port must be a valid port number');
+      process.exit(1);
+    }
+    monitor({ workspace: workspaceId, port, host });
     break;
   }
   case 'workspaces':
