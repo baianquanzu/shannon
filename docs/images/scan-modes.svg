@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="560" viewBox="0 0 1280 560">
+  <defs>
+    <style>
+      .bg { fill: #f6f8fb; }
+      .title { font: 700 34px "Microsoft YaHei", "Noto Sans CJK SC", Arial, sans-serif; fill: #102033; }
+      .text { font: 500 20px "Microsoft YaHei", "Noto Sans CJK SC", Arial, sans-serif; fill: #24364d; }
+      .small { font: 400 16px "Microsoft YaHei", "Noto Sans CJK SC", Arial, sans-serif; fill: #51657f; }
+      .box { fill: #ffffff; stroke: #d4deea; stroke-width: 2; rx: 10; }
+      .primary { fill: #0866c2; }
+      .green { fill: #0f8a5f; }
+      .orange { fill: #d97706; }
+      .red { fill: #c62828; }
+      .white { fill: #ffffff; }
+      .line { stroke: #8da2bb; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+    </style>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#8da2bb"/>
+    </marker>
+  </defs>
+  <rect class="bg" width="1280" height="560"/>
+  <text class="title" x="48" y="64">Shannon 中文增强版扫描流程</text>
+  <text class="small" x="48" y="96">只上传代码走本地中文源码审计；已有 URL 和远程 Linux 模式会调用原版 Shannon 检测流程。</text>
+
+  <rect class="box" x="48" y="150" width="230" height="110"/>
+  <circle class="primary" cx="78" cy="190" r="15"/>
+  <text class="text" x="104" y="197">上传代码包</text>
+  <text class="small" x="72" y="232">zip / tar / tgz</text>
+
+  <path class="line" d="M 278 205 L 355 205"/>
+  <rect class="box" x="360" y="90" width="270" height="100"/>
+  <rect class="green" x="384" y="118" width="14" height="44" rx="4"/>
+  <text class="text" x="416" y="132">模式一：源码审计</text>
+  <text class="small" x="416" y="162">生成中文源码审计报告</text>
+
+  <rect class="box" x="360" y="230" width="270" height="100"/>
+  <rect class="orange" x="384" y="258" width="14" height="44" rx="4"/>
+  <text class="text" x="416" y="272">模式二：已有 URL</text>
+  <text class="small" x="416" y="302">直接交给原版 Shannon</text>
+
+  <rect class="box" x="360" y="370" width="270" height="100"/>
+  <rect class="red" x="384" y="398" width="14" height="44" rx="4"/>
+  <text class="text" x="416" y="412">模式三：远程 Linux</text>
+  <text class="small" x="416" y="442">先部署目标，再调用 Shannon</text>
+
+  <path class="line" d="M 630 140 L 725 250"/>
+  <path class="line" d="M 630 280 L 715 280"/>
+  <path class="line" d="M 630 420 L 725 310"/>
+
+  <rect class="box" x="730" y="220" width="250" height="120"/>
+  <circle class="primary" cx="762" cy="262" r="15"/>
+  <text class="text" x="790" y="269">原版 Shannon</text>
+  <text class="small" x="762" y="304">需要 Docker Desktop</text>
+
+  <path class="line" d="M 980 280 L 1070 280"/>
+  <rect class="box" x="1076" y="220" width="160" height="120"/>
+  <circle class="green" cx="1110" cy="262" r="15"/>
+  <text class="text" x="1136" y="269">报告</text>
+  <text class="small" x="1106" y="304">可在线查看</text>
+</svg>

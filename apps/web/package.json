@@ -1,0 +1,20 @@
+{
+  "name": "@shannon/web",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/server.js",
+  "scripts": {
+    "build": "tsc",
+    "check": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "adm-zip": "^0.5.16",
+    "ssh2": "^1.17.0"
+  },
+  "devDependencies": {
+    "@types/adm-zip": "^0.5.7",
+    "@types/ssh2": "^1.15.5"
+  }
+}
